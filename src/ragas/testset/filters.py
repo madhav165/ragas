@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import typing as t
 from abc import ABC
@@ -54,7 +55,8 @@ class NodeFilter(Filter):
     async def filter(self, node: Node) -> t.Dict:
         prompt = self.context_scoring_prompt.format(context=node.page_content)
         results = await self.llm.generate(prompt=prompt)
-        output = results.generations[0][0].text.strip()
+        # get result from text["results"][0]["generated_text"] for WatsonX models
+        output = json.loads(results.generations[0][0].text)["results"][0]["generated_text"].strip()
         output = await context_scoring_parser.aparse(output, prompt, self.llm)
         output = output.dict() if output is not None else {}
         output["score"] = sum(output.values()) / len(output.values())
@@ -87,7 +89,8 @@ class QuestionFilter(Filter):
     async def filter(self, question: str) -> t.Tuple[bool, str]:
         prompt = self.filter_question_prompt.format(question=question)
         results = await self.llm.generate(prompt=prompt)
-        results = results.generations[0][0].text.strip()
+        # get result from text["results"][0]["generated_text"] for WatsonX models
+        results = json.loads(results.generations[0][0].text)["results"][0]["generated_text"].strip()
         results = await question_filter_parser.aparse(results, prompt, self.llm)
         results = results.dict() if results is not None else {}
         logger.debug("filtered question: %s", results)
@@ -120,7 +123,8 @@ class EvolutionFilter(Filter):
             question1=simple_question, question2=compressed_question
         )
         results = await self.llm.generate(prompt=prompt)
-        results = results.generations[0][0].text.strip()
+        # get result from text["results"][0]["generated_text"] for WatsonX models
+        results = json.loads(results.generations[0][0].text)["results"][0]["generated_text"].strip()
         results = await evolution_elimination_parser.aparse(results, prompt, self.llm)
         results = results.dict() if results is not None else {}
         logger.debug("evolution filter: %s", results)
