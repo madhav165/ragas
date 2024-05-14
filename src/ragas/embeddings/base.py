@@ -52,15 +52,19 @@ class LangchainEmbeddingsWrapper(BaseRagasEmbeddings):
         self.set_run_config(run_config)
 
     def embed_query(self, text: str) -> List[float]:
+        print("Embeded query")
         return self.embeddings.embed_query(text)
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
+        print("Embeded documents")
         return self.embeddings.embed_documents(texts)
 
     async def aembed_query(self, text: str) -> List[float]:
+        print("AEmbeded query")
         return await self.embeddings.aembed_query(text)
 
     async def aembed_documents(self, texts: List[str]) -> List[List[float]]:
+        print("AEmbeded documents")
         return await self.embeddings.aembed_documents(texts)
 
     def set_run_config(self, run_config: RunConfig):
