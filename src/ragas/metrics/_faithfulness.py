@@ -249,6 +249,7 @@ class Faithfulness(MetricWithLLM):
         statements = await _statements_output_parser.aparse(
             json.loads(statements.generations[0][0].text)["results"][0]["generated_text"], p_value, self.llm, self.max_retries
         )
+        print(f'{statements=}')
 
         if statements is None:
             return np.nan
