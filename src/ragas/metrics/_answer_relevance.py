@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import typing as t
 from dataclasses import dataclass, field
@@ -155,9 +156,9 @@ class AnswerRelevancy(MetricWithLLM, MetricWithEmbeddings):
             callbacks=callbacks,
             is_async=is_async,
         )
-
+        # get result from text["results"][0]["generated_text"] for WatsonX models
         answers = [
-            await _output_parser.aparse(result.text, prompt, self.llm)
+            await _output_parser.aparse(json.loads(result.text)["results"][0]["generated_text"], prompt, self.llm)
             for result in result.generations[0]
         ]
         if any(answer is None for answer in answers):
