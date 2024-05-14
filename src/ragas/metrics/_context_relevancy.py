@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import typing as t
 from dataclasses import dataclass, field
@@ -81,7 +82,8 @@ class ContextRelevancy(MetricWithLLM):
             ),
             callbacks=callbacks,
         )
-        return self._compute_score(result.generations[0][0].text, row)
+        # get result from text["results"][0]["generated_text"] for WatsonX models
+        return self._compute_score(json.loads(result.generations[0][0].text)["results"][0]["generated_text"], row)
 
     def adapt(self, language: str, cache_dir: str | None = None) -> None:
         assert self.llm is not None, "set LLM before use"
