@@ -66,6 +66,7 @@ class RagasoutputParser(PydanticOutputParser):
                 )
                 output = await llm.generate(p_value)
                 result = output.generations[0][0].text
+                # get result from text["results"][0]["generated_text"] for WatsonX models
                 result = json.loads(result)["results"][0]["generated_text"]
                 return await self.aparse(result, prompt, llm, max_retries - 1)
             else:
