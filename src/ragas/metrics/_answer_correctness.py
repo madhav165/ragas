@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import typing as t
 from dataclasses import dataclass, field
@@ -217,8 +218,9 @@ class AnswerCorrectness(MetricWithLLM, MetricWithEmbeddings):
             item_statement = await self.llm.generate(
                 p_value, callbacks=callbacks, is_async=is_async
             )
+            # get result from text["results"][0]["generated_text"] for WatsonX models
             statements[item] = await _statements_output_parser.aparse(
-                item_statement.generations[0][0].text,
+                json.loads(item_statement.generations[0][0].text)["results"][0]["generated_text"],
                 p_value,
                 self.llm,
                 self.max_retries,
@@ -238,7 +240,8 @@ class AnswerCorrectness(MetricWithLLM, MetricWithEmbeddings):
         is_statement_present = await self.llm.generate(
             p_value, callbacks=callbacks, is_async=is_async
         )
-        result_text = is_statement_present.generations[0][0].text
+        # get result from text["results"][0]["generated_text"] for WatsonX models
+        result_text = json.loads(is_statement_present.generations[0][0].text)["results"][0]["generated_text"]
 
         answers = await _output_parser.aparse(
             result_text, p_value, self.llm, self.max_retries
