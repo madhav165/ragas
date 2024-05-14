@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import typing as t
 from abc import ABC, abstractmethod
@@ -47,8 +48,9 @@ class KeyphraseExtractor(Extractor):
     async def extract(self, node: Node, is_async: bool = True) -> t.List[str]:
         prompt = self.extractor_prompt.format(text=node.page_content)
         results = await self.llm.generate(prompt=prompt, is_async=is_async)
+        # get result from text["results"][0]["generated_text"] for WatsonX models
         keyphrases = await json_loader.safe_load(
-            results.generations[0][0].text.strip(), llm=self.llm, is_async=is_async
+            json.loads(results.generations[0][0].text)["results"][0]["generated_text"].strip(), llm=self.llm, is_async=is_async
         )
         keyphrases = keyphrases if isinstance(keyphrases, dict) else {}
         logger.debug("topics: %s", keyphrases)
