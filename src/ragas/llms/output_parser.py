@@ -65,8 +65,10 @@ class RagasoutputParser(PydanticOutputParser):
                     prompt=prompt.to_string(), completion=result
                 )
                 output = await llm.generate(p_value)
-                result = output.generations[0][0].text.results[0].generated_text
-                print(f'{result=}')
+                result = output.generations[0][0].text
+                print(f'{type(result)=}')
+                # .results[0].generated_text
+                # print(f'{result=}')
                 return await self.aparse(result, prompt, llm, max_retries - 1)
             else:
                 logger.warning("Failed to parse output. Returning None.")
