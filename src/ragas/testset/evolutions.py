@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import typing as t
 from abc import abstractmethod
@@ -125,7 +126,8 @@ class Evolution:
         results = await self.generator_llm.generate(
             prompt=prompt.format(question=question), is_async=self.is_async
         )
-        return results.generations[0][0].text.strip()
+        # get result from text["results"][0]["generated_text"] for WatsonX models
+        return json.loads(results.generations[0][0].text)["results"][0]["generated_text"].strip()
 
     def _get_new_random_node(self):
         assert self.docstore is not None, "docstore cannot be None"
@@ -165,7 +167,8 @@ class Evolution:
             results = await self.generator_llm.generate(
                 prompt=prompt, is_async=self.is_async
             )
-            question = results.generations[0][0].text.strip()
+            # get result from text["results"][0]["generated_text"] for WatsonX models
+            question = json.loads(results.generations[0][0].text)["results"][0]["generated_text"].strip()
 
         return question, current_nodes
 
@@ -194,8 +197,9 @@ class Evolution:
                 question=question, contexts=node_content
             )
         )
+        # get result from text["results"][0]["generated_text"] for WatsonX models
         relevant_contexts_result = await json_loader.safe_load(
-            results.generations[0][0].text.strip(), llm=self.generator_llm
+            json.loads(results.generations[0][0].text)["results"][0]["generated_text"].strip(), llm=self.generator_llm
         )
         relevant_context_indices = (
             relevant_contexts_result.get("relevant_contexts", None)
@@ -224,8 +228,9 @@ class Evolution:
                 question=question, context=merged_nodes.page_content
             )
         )
+        # get result from text["results"][0]["generated_text"] for WatsonX models
         answer = await json_loader.safe_load(
-            results.generations[0][0].text.strip(), self.generator_llm
+            json.loads(results.generations[0][0].text)["results"][0]["generated_text"].strip(), self.generator_llm
         )
         answer = answer if isinstance(answer, dict) else {}
         logger.debug("answer generated: %s", answer)
@@ -301,7 +306,8 @@ class SimpleEvolution(Evolution):
                 keyphrase=rng.choice(np.array(merged_node.keyphrases), size=1)[0],
             )
         )
-        seed_question = results.generations[0][0].text
+        # get result from text["results"][0]["generated_text"] for WatsonX models
+        seed_question = json.loads(results.generations[0][0].text)["results"][0]["generated_text"]
         logger.info("seed question generated: %s", seed_question)
         is_valid_question, feedback = await self.question_filter.filter(seed_question)
 
@@ -385,7 +391,8 @@ class ComplexEvolution(Evolution):
                 question=simple_question, context=merged_node.page_content
             )
         )
-        reasoning_question = result.generations[0][0].text.strip()
+        # get result from text["results"][0]["generated_text"] for WatsonX models
+        reasoning_question = json.loads(result.generations[0][0].text)["results"][0]["generated_text"].strip()
         is_valid_question, feedback = await self.question_filter.filter(
             reasoning_question
         )
@@ -483,7 +490,8 @@ class MultiContextEvolution(ComplexEvolution):
             context2=similar_node[0].page_content,
         )
         results = await self.generator_llm.generate(prompt=prompt)
-        question = results.generations[0][0].text.strip()
+        # get result from text["results"][0]["generated_text"] for WatsonX models
+        question = json.loads(results.generations[0][0].text)["results"][0]["generated_text"].strip()
         logger.debug(
             "[MultiContextEvolution] multicontext question generated: %s", question
         )
