@@ -246,6 +246,7 @@ class Faithfulness(MetricWithLLM):
             callbacks=callbacks,
             is_async=is_async,
         )
+        # get result from text["results"][0]["generated_text"] for WatsonX models
         statements = await _statements_output_parser.aparse(
             json.loads(statements.generations[0][0].text)["results"][0]["generated_text"], p_value, self.llm, self.max_retries
         )
@@ -265,9 +266,9 @@ class Faithfulness(MetricWithLLM):
             is_async=is_async,
             n=self._reproducibility,
         )
-
+        # get result from text["results"][0]["generated_text"] for WatsonX models
         nli_result_text = [
-            nli_result.generations[0][i].text for i in range(self._reproducibility)
+            json.loads(nli_result.generations[0][i].text)["results"][0]["generated_text"] for i in range(self._reproducibility)
         ]
         
         faithfulness_list = [
