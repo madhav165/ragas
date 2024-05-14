@@ -128,8 +128,8 @@ class AspectCritique(MetricWithLLM):
         result = await self.llm.generate(
             p_value, callbacks=callbacks, is_async=is_async
         )
-
-        responses = [r.text for r in result.generations[0]]
+        # get result from text["results"][0]["generated_text"] for WatsonX models
+        responses = [json.loads(r.text)["results"][0]["generated_text"] for r in result.generations[0]]
         safe_loaded_responses = [
             await _output_parser.aparse(r, p_value, self.llm, self.max_retries)
             for r in responses
