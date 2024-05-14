@@ -269,7 +269,7 @@ class Faithfulness(MetricWithLLM):
         nli_result_text = [
             json.loads(nli_result.generations[0][i].text)["results"][0]["generated_text"] for i in range(self._reproducibility)
         ]
-        print(f'{nli_result_text=}')
+        
         faithfulness_list = [
             await _faithfulness_output_parser.aparse(
                 text, p_value, self.llm, self.max_retries
