@@ -247,7 +247,7 @@ class Faithfulness(MetricWithLLM):
             is_async=is_async,
         )
         statements = await _statements_output_parser.aparse(
-            statements.generations[0][0].text, p_value, self.llm, self.max_retries
+            json.loads(statements.generations[0][0].text)["results"][0]["generated_text"], p_value, self.llm, self.max_retries
         )
 
         if statements is None:
@@ -267,7 +267,7 @@ class Faithfulness(MetricWithLLM):
         )
 
         nli_result_text = [
-            nli_result.generations[0][i].text for i in range(self._reproducibility)
+            json.loads(nli_result.generations[0][i].text)["results"][0]["generated_text"] for i in range(self._reproducibility)
         ]
         faithfulness_list = [
             await _faithfulness_output_parser.aparse(
