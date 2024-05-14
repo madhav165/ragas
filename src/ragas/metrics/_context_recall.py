@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import typing as t
 from dataclasses import dataclass, field
@@ -167,7 +168,8 @@ class ContextRecall(MetricWithLLM):
             is_async=is_async,
             n=self.reproducibility,
         )
-        results = [results.generations[0][i].text for i in range(self.reproducibility)]
+        # get result from text["results"][0]["generated_text"] for WatsonX models
+        results = [json.loads(results.generations[0][i].text)["results"][0]["generated_text"] for i in range(self.reproducibility)]
 
         answers = [
             await _output_parser.aparse(text, p_value, self.llm, self.max_retries)
