@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import typing as t
 from dataclasses import dataclass, field
@@ -159,8 +160,9 @@ class ContextPrecision(MetricWithLLM):
                 is_async=is_async,
                 n=self.reproducibility,
             )
+            # get result from text["results"][0]["generated_text"] for WatsonX models
             results = [
-                await _output_parser.aparse(item.text, hp, self.llm, self.max_retries)
+                await _output_parser.aparse(json.loads(item.text)["results"][0]["generated_text"], hp, self.llm, self.max_retries)
                 for item in results.generations[0]
             ]
 
