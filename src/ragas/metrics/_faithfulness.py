@@ -270,15 +270,16 @@ class Faithfulness(MetricWithLLM):
         nli_result_text = [
             json.loads(nli_result.generations[0][i].text)["results"][0]["generated_text"] for i in range(self._reproducibility)
         ]
-        
+
+        for text in nli_result_text:
+            print(f'{text=}')
+            
         faithfulness_list = [
             await _faithfulness_output_parser.aparse(
                 text, p_value, self.llm, self.max_retries
             )
             for text in nli_result_text
         ]
-
-        print(f'{faithfulness_list=}')
 
         faithfulness_list = [
             faith.dicts() for faith in faithfulness_list if faith is not None
