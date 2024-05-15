@@ -278,6 +278,8 @@ class Faithfulness(MetricWithLLM):
             for text in nli_result_text
         ]
 
+        print(f'{faithfulness_list=}')
+
         faithfulness_list = [
             faith.dicts() for faith in faithfulness_list if faith is not None
         ]
