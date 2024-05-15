@@ -266,6 +266,7 @@ class Faithfulness(MetricWithLLM):
             is_async=is_async,
             n=self._reproducibility,
         )
+        print(f'{nli_result=}')
         # get result from text["results"][0]["generated_text"] for WatsonX models
         nli_result_text = [
             json.loads(nli_result.generations[0][i].text)["results"][0]["generated_text"] for i in range(self._reproducibility)
