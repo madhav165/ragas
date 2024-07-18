@@ -14,8 +14,8 @@ dependencies = [
     "nest-asyncio",
     "appdirs",
 ]
-# readme = "README.md"
-# dynamic = ["readme"]
+readme = "README.md"
+dynamic = ["readme"]
 
 [project.optional-dependencies]
 all = [
@@ -29,11 +29,11 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools]
 package-dir = {"" = "src"}
 
-# [tool.setuptools.dynamic]
-# readme = {file = ["README.md"], content-type = "text/plain"}
+[tool.setuptools.dynamic]
+readme = {file = ["README.md"], content-type = "text/plain"}
 
 [tool.ruff.lint]
 ignore = ["E501"]
 
-# [tool.setuptools_scm]
-# write_to = "src/ragas/_version.py"
+[tool.setuptools_scm]
+write_to = "src/ragas/_version.py"
