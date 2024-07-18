@@ -1,6 +1,10 @@
 [project]
 name = "ragas"
-version = "^0.1.8"
+version = "0.1.8"
+description = "A description of the Ragas project"
+authors = [
+    { name = "Author Name", email = "author@example.com" }
+]
 dependencies = [
     "numpy",
     "datasets",
@@ -14,25 +18,27 @@ dependencies = [
     "nest-asyncio",
     "appdirs",
 ]
-dynamic = ["version", "readme"]
+optional-dependencies = { 
+    all = [
+        "sentence-transformers",
+    ]
+}
+readme = "README.md"
+dynamic = ["version"]
 
-[project.optional-dependencies]
-all = [
-    "sentence-transformers",
-]
+[build-system]
+requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
 
 [tool.setuptools.dynamic]
+version = {attr = "ragas.__version__"}
 readme = {file = ["README.md"], content-type = "text/plain"}
 
-[tool.ruff.lint]
-ignore = ["E501"]
-
-[build-system]
-requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
-build-backend = "setuptools.build_meta"
+[tool.ruff]
+lint = { ignore = ["E501"] }
 
 [tool.setuptools_scm]
 write_to = "src/ragas/_version.py"
