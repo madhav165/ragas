@@ -13,7 +13,7 @@ dependencies = [
     "pysbd>=0.3.4",
     "nest-asyncio",
     "appdirs",
-# ]
+]
 # readme = "README.md"
 # dynamic = ["readme"]
 
